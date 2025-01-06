@@ -15,7 +15,7 @@ Master the key skills to excel as ML Engineer, including:
 - **`notes/`**: Resúmenes y apuntes técnicos.
 - **`resources/`**: Recursos útiles para aprender ML.
 
-## 📅 Progreso
+## 📅 Progress
 - **Stage 1 (Months 1-6):** Solid foundations.  
 - **Stage 2 (Months 7-12):** Mastering the basics of ML.  
 - **Stage 3 (Months 13-18):** Advanced concepts and big projects.  
