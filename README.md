@@ -11,9 +11,10 @@ Master the key skills to excel as ML Engineer, including:
 - MLOps.
 
 ## 📂 Content
-- **`projects/`**: Proyectos prácticos organizados por tema.
-- **`notes/`**: Resúmenes y apuntes técnicos.
-- **`resources/`**: Recursos útiles para aprender ML.
+- **`pythonBasics/`**: Python basics.
+- **`projects/`**: Practical projects organized by topics.
+- **`notes/`**: Summaries and notes.
+- **`resources/`**: Resources used.
 
 ## 📅 Progress
 - **Stage 1 (Months 1-6):** Solid foundations.  
