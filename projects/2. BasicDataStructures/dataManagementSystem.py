@@ -7,7 +7,7 @@ def showMenu():
         print("-" * 20)
         print("1. Add a Student")
         print("2. View all students")
-        print("3. Find students older rhan a specific age")
+        print("3. Find students older than a specific age")
         print("4. Exit")
         print("-" * 20)
         while True:
