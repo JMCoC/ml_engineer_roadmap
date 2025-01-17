@@ -129,4 +129,3 @@ def showInventory():
             print(f"  - {product}: {quantity}")
 
 showMenu()
-
