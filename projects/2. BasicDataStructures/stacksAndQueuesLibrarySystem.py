@@ -67,7 +67,6 @@ def addClient():
     clients.append(name)
     print(f"{name} has been added to the queue.")
 
-
 def addBook(basket):
     print("-" * 20)
     for book in range(len(books)):
@@ -89,15 +88,12 @@ def addBook(basket):
     else:
         print("Invalid Option")
 
-
-
 def removeBook(basket):
     if basket:
         bookRemoved = basket.pop()
         print(f"Book removed: {bookRemoved}")
     else:
         print("The basket is empty, no books to remove.")
-
 
 def seeBasket(basket):
     if basket:
@@ -107,7 +103,4 @@ def seeBasket(basket):
     else:
         print("The basket is empty.")
 
-
-
 showMenu()
-
