@@ -71,7 +71,7 @@ class Dog:
     def __init__(self, name):
         self.name = name #instance variable
     
-dog1 = Dog("Buddy")
+dog1 = Dog("Buddy") #creating an object of the class
 dog2 = Dog("Max")
 
 print(dog1.kind) #output: canine
@@ -89,3 +89,14 @@ print(dog1.name) #output: Rocky
 Dog.kind = "feline"
 print(dog1.kind) #output: feline
 print(dog2.kind) #output: feline
+
+#Object is an instance of a class, its a copy of the class with actual values.
+#An object consists of:
+#1. State: It is represented by attributes of an object. It also reflects the properties of an object.
+#2. Behavior: It is represented by methods of an object. It also reflects the response of an object with other objects.
+#3. Identity: It gives a unique name to an object and enables one object to interact with other objects.
+
+#You can delete an object using the del keyword and also delete the object attributes using the del keyword.
+
+del dog1.name
+del dog1
