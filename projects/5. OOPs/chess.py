@@ -23,7 +23,22 @@ class Pawn(Piece):
         super().__init__(color, position)
     
     def validMoves(self, board):
-        print("Valid")
+        moves = []
+        x, y = self.getPosition()
+        direction = 1 if self.getColor() == "white" else -1
+        try:
+            if board.grid[x + direction][y] == " ":
+                moves.append((x + direction, y))
+                if board.grid[x + direction * 2][y] == " " and (self.getPosition()[0] == 1 and self.getColor() == "white") or (self.getPosition()[0] == 6 and self.getColor() == "black"):
+                    moves.append((x + direction * 2, y))
+            if y > 0 and isinstance(board.grid[x + direction][y - 1], Piece) and board.grid[x + direction][y - 1].getColor() != self.getColor():
+                moves.append((x + direction, y - 1))
+            if y < 7 and isinstance(board.grid[x + direction][y + 1], Piece) and board.grid[x + direction][y + 1].getColor() != self.getColor():
+                moves.append((x + direction, y + 1))
+        except IndexError:
+            return moves
+        
+        return moves
 
 class Rook(Piece):
     def __init__(self, color, position):
@@ -71,8 +86,8 @@ class Board:
     def initializeBoard(self):
         self.grid[0][0] = Rook("white", (0, 0))
         self.grid[0][7] = Rook("white", (0, 7))
-        self.grid[7][0] = Rook("black", (0, 0))
-        self.grid[7][7] = Rook("black", (0, 0))
+        self.grid[7][0] = Rook("black", (7, 0))
+        self.grid[7][7] = Rook("black", (7, 7))
 
         self.grid[0][1] = Knight("white", (0, 1))
         self.grid[0][6] = Knight("white", (0, 6))
@@ -93,6 +108,11 @@ class Board:
         for i in range(8):
             self.grid[1][i] = Pawn("white", (1, i))
             self.grid[6][i] = Pawn("black", (1, i))
+        
+        #TEST
+        #self.grid[3][0] = Pawn("white", (3, 0))
+        #self.grid[2][0] = Pawn("black", (2, 0))
+        #self.grid[2][2] = Pawn("black", (2, 2))
 
     def movePiece():
         pass
@@ -101,8 +121,6 @@ class Board:
         for row in self.grid:
             print(" | ".join([piece.__class__.__name__[0] if piece != " " else " " for piece in row]))
             print("-" * 31)
-
-
 
 class Game:
     def __init__(self):
@@ -113,4 +131,6 @@ class Game:
         self.turn = "black" if self.turn == "white" else "white"
 
 board = Board()
+pawn = Pawn("white", (1,1))
+print(pawn.validMoves(board))
 board.display()
