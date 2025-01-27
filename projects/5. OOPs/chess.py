@@ -44,8 +44,29 @@ class Rook(Piece):
     def __init__(self, color, position):
         super().__init__(color, position)
     
-    def validMoves(self):
-        print("Valid")
+    def validMoves(self, board):
+        moves = []
+        x, y = self.getPosition()
+
+        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+
+        for dx, dy in directions:
+            nx, ny = x, y
+            while True:
+                nx += dx
+                ny += dy
+                if 0 <= nx < 8 and 0 <= ny < 8:
+                    if board.grid[nx][ny] == " ":
+                        moves.append((nx, ny))
+                    elif isinstance(board.grid[nx][ny], Piece) and board.grid[nx][ny].getColor() != self.getColor():
+                        moves.append((nx, ny))
+                        break
+                    else:
+                        break
+                else:
+                    break
+
+        return moves
 
 class Knight(Piece):
     def __init__(self, color, position):
@@ -107,8 +128,8 @@ class Board:
 
         for i in range(8):
             self.grid[1][i] = Pawn("white", (1, i))
-            self.grid[6][i] = Pawn("black", (1, i))
-        
+            self.grid[6][i] = Pawn("black", (6, i))
+        #pass
         #TEST
         #self.grid[3][0] = Pawn("white", (3, 0))
         #self.grid[2][0] = Pawn("black", (2, 0))
@@ -131,6 +152,8 @@ class Game:
         self.turn = "black" if self.turn == "white" else "white"
 
 board = Board()
-pawn = Pawn("white", (1,1))
+pawn = Pawn("white", (1,0))
+rook = Rook("black", (0,3))
 print(pawn.validMoves(board))
+print(rook.validMoves(board))
 board.display()
