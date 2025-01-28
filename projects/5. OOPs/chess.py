@@ -65,29 +65,89 @@ class Rook(Piece):
                         break
                 else:
                     break
-
         return moves
 
 class Knight(Piece):
     def __init__(self, color, position):
         super().__init__(color, position)
     
-    def validMoves(self):
-        print("Valid")
+    def validMoves(self, board):
+        moves = []
+        x, y = self.getPosition()
+
+        jumps = [(2, 1), (2, -1), (-2, 1), (-2, -1), (1, 2), (-1, 2), (1, -2), (-1, -2)]
+
+        for dx, dy in jumps:
+            nx, ny = x, y
+            while True:
+                nx += dx
+                ny += dy
+                if 0 <= nx < 8 and 0 <= ny < 8:
+                    if board.grid[nx][ny] == " ":
+                        moves.append((nx, ny))
+                        break
+                    elif isinstance(board.grid[nx][ny], Piece) and board.grid[nx][ny].getColor() != self.getColor():
+                        moves.append((nx, ny))
+                        break
+                    else:
+                        break
+                else:
+                    break
+        return moves
 
 class Bishop(Piece):
     def __init__(self, color, position):
         super().__init__(color, position)
     
-    def validMoves(self):
-        print("Valid")
+    def validMoves(self, board):
+        moves = []
+        x, y = self.getPosition()
+
+        directions = [(1, 1), (-1, 1), (1, -1), (-1, -1)]
+
+        for dx, dy in directions:
+            nx, ny = x, y
+            while True:
+                nx += dx
+                ny += dy
+                if 0 <= nx < 8 and 0 <= ny < 8:
+                    if board.grid[nx][ny] == " ":
+                        moves.append((nx, ny))
+                    elif isinstance(board.grid[nx][ny], Piece) and board.grid[nx][ny].getColor() != self.getColor():
+                        moves.append((nx, ny))
+                        break
+                    else:
+                        break
+                else:
+                    break
+        return moves
 
 class Queen(Piece):
     def __init__(self, color, position):
         super().__init__(color, position)
     
-    def validMoves(self):
-        print("Valid")
+    def validMoves(self, board):
+        moves = []
+        x, y = self.getPosition()
+
+        directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)]
+
+        for dx, dy in directions:
+            nx, ny = x, y
+            while True:
+                nx += dx
+                ny += dy
+                if 0 <= nx < 8 and 0 <= ny < 8:
+                    if board.grid[nx][ny] == " ":
+                        moves.append((nx, ny))
+                    elif isinstance(board.grid[nx][ny], Piece) and board.grid[nx][ny].getColor() != self.getColor():
+                        moves.append((nx, ny))
+                        break
+                    else:
+                        break
+                else:
+                    break
+        return moves
     
 class King(Piece):
 
@@ -95,8 +155,29 @@ class King(Piece):
     def __init__(self, color, position):
         super().__init__(color, position)
     
-    def validMoves(self):
-        print("Valid")
+    def validMoves(self, board):
+        moves = []
+        x, y = self.getPosition()
+
+        directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)]
+
+        for dx, dy in directions:
+            nx, ny = x, y
+            while True:
+                nx += dx
+                ny += dy
+                if 0 <= nx < 8 and 0 <= ny < 8:
+                    if board.grid[nx][ny] == " ":
+                        moves.append((nx, ny))
+                        break
+                    elif isinstance(board.grid[nx][ny], Piece) and board.grid[nx][ny].getColor() != self.getColor():
+                        moves.append((nx, ny))
+                        break
+                    else:
+                        break
+                else:
+                    break
+        return moves
 
 class Board:
 
@@ -153,7 +234,15 @@ class Game:
 
 board = Board()
 pawn = Pawn("white", (1,0))
-rook = Rook("black", (0,3))
+rook = Rook("black", (3,3))
+knight = Knight("white", (3,3))
+bishop = Bishop("white", (3,3))
+queen = Queen("white", (3,3))
+king = King("white", (3,3))
 print(pawn.validMoves(board))
 print(rook.validMoves(board))
+print(knight.validMoves(board))
+print(bishop.validMoves(board))
+print(queen.validMoves(board))
+print(king.validMoves(board))
 board.display()
