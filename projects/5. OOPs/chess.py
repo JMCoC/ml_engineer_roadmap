@@ -216,8 +216,21 @@ class Board:
         #self.grid[2][0] = Pawn("black", (2, 0))
         #self.grid[2][2] = Pawn("black", (2, 2))
 
-    def movePiece():
-        pass
+    def movePiece(self, start, end):
+        piece = self.grid[start[0]][start[1]]
+        if piece == " " or piece.getColor() != game.getTurn():
+            return False
+
+        valid_moves = piece.validMoves(self)
+        if end not in valid_moves:
+            return False
+
+        self.grid[end[0]][end[1]] = piece
+        self.grid[start[0]][start[1]] = " "
+        piece.setPosition(end)
+        game.switchTurn()
+        return True
+        
 
     def display(self):
         for row in self.grid:
@@ -229,20 +242,40 @@ class Game:
         self.board = Board()
         self.turn = "white"
 
+    def play(self):
+        while True:
+            self.board.display()
+            try:
+                s1, s2 = map(int, input("Enter start position (x y): ").split())
+                e1, e2 = map(int, input("Enter end position (x y): ").split())
+                start = (s1, s2)
+                end = (e1, e2)
+                if not self.board.movePiece(start, end):
+                    print("Invalid move")
+            except ValueError:
+                print("Invalid input. Please enter numbers separated by space.")
+            except IndexError:
+                print("Invalid input. Coordinates out of bounds.")
+
     def switchTurn(self):
         self.turn = "black" if self.turn == "white" else "white"
+    
+    def getTurn(self):
+        return self.turn
 
+#TEST
 board = Board()
-pawn = Pawn("white", (1,0))
+# pawn = Pawn("white", (1,0))
 rook = Rook("black", (3,3))
-knight = Knight("white", (3,3))
-bishop = Bishop("white", (3,3))
-queen = Queen("white", (3,3))
-king = King("white", (3,3))
-print(pawn.validMoves(board))
+# knight = Knight("white", (3,3))
+# bishop = Bishop("white", (3,3))
+# queen = Queen("white", (3,3))
+# king = King("white", (3,3))
+# print(pawn.validMoves(board))
 print(rook.validMoves(board))
-print(knight.validMoves(board))
-print(bishop.validMoves(board))
-print(queen.validMoves(board))
-print(king.validMoves(board))
-board.display()
+# print(knight.validMoves(board))
+# print(bishop.validMoves(board))
+# print(queen.validMoves(board))
+# print(king.validMoves(board))
+game = Game()
+game.play()
