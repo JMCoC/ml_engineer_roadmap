@@ -64,6 +64,33 @@ class Pawn(Piece):
             return moves
         
         return moves
+    
+    def promotion(self, color, position, board):
+        while True:
+            print("1. Rook")
+            print("2. Knight")
+            print("3. Bishop")
+            print("4. Queen")
+            try:
+                option = int(input("Promote to: "))
+                break
+            except ValueError:
+                print("Please enter a valid number.")
+                continue
+        if option == 1:
+            rook = Rook(color, position)
+            board.grid[rook.getPosition()[0]][rook.getPosition()[1]] = rook
+        elif  option == 2:
+            knight = Knight(color, position)
+            board.grid[knight.getPosition()[0]][knight.getPosition()[1]] = knight
+        elif  option == 3:
+            bishop = Bishop(color, position)
+            board.grid[bishop.getPosition()[0]][bishop.getPosition()[1]] = bishop
+        elif option == 4:
+            queen = Queen(color, position)
+            board.grid[queen.getPosition()[0]][queen.getPosition()[1]] = queen
+        else:
+            print("Invalid option")
 
 class Rook(SlidingPiece):
     def __init__(self, color, position):
@@ -109,11 +136,25 @@ class Queen(SlidingPiece):
         self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]  
     
 class King(Piece):
-
-
-    def __init__(self, color, position):
+    def __init__(self, color, position): #Add check attribute after
+        # self.__check = check
         super().__init__(color, position)
+        
+    # def getCheck(self):
+    #     return self.__check
     
+    # def setCheck(self, check):
+    #     self.__check = check
+    
+    # def inCheck(self, board, nextMoves):
+    #     moves = self.validMoves(board)
+    #     if self.getCheck() == True:
+    #         for move in nextMoves:
+    #             if move in moves:
+    #                 moves.remove(move)
+    #         print(moves)
+    #         return moves
+
     def validMoves(self, board):
         moves = []
         x, y = self.getPosition()
@@ -163,12 +204,12 @@ class Board:
         self.grid[0][3] = Queen("white", (0, 3))
         self.grid[7][3] = Queen("black", (7, 3))
         
-        self.grid[0][4] = King("white", (0, 4))
-        self.grid[7][4] = King("black", (7, 4))
+        self.grid[0][4] = King("white", (0, 4)) #check attribute (False)
+        self.grid[7][4] = King("black", (7, 4)) #check attribute (False)
 
         for i in range(8):
-            self.grid[1][i] = Pawn("white", (1, i))
-            self.grid[6][i] = Pawn("black", (6, i))
+            self.grid[1][i] = Pawn("white", (1, i)) #1, i
+            self.grid[6][i] = Pawn("black", (6, i)) #6, i
         #pass
         #TEST
         #self.grid[3][0] = Pawn("white", (3, 0))
@@ -187,6 +228,16 @@ class Board:
         self.grid[end[0]][end[1]] = piece
         self.grid[start[0]][start[1]] = " "
         piece.setPosition(end)
+        # nextValidMoves = piece.validMoves(self)
+        # for x, y in nextValidMoves:
+        #     if isinstance(self.grid[x][y], King) and self.grid[x][y].getColor() != piece.getColor():
+        #         print("Atacando rey enemigo")
+        #         self.grid[x][y].setCheck(True)
+        #         self.grid[x][y].inCheck(self, nextValidMoves)
+        #         break
+        if isinstance(piece, Pawn) and ((piece.getPosition()[0] == 7 and piece.getColor() == "white") or (piece.getPosition()[0] == 0 and piece.getColor() == "black")):
+            piece.promotion(piece.getColor(), piece.getPosition(), self)
+
         game.switchTurn()
         return True
 
