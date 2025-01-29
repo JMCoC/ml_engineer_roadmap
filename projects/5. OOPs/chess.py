@@ -6,7 +6,7 @@ class Piece(ABC):
         self.__position = position
         
     @abstractmethod
-    def validMoves(self):
+    def validMoves(self, board):
         pass
 
     def getColor(self):
@@ -16,7 +16,32 @@ class Piece(ABC):
         return self.__position
 
     def setPosition(self, position):
-        self.__position = position
+        if isinstance(position, tuple) and len(position) == 2:
+            self.__position = position
+        else:
+            raise ValueError("Position must be a tuple of (row, column)")
+
+class SlidingPiece(Piece):
+    def validMoves(self, board):
+        moves = []
+        x, y = self.getPosition()
+
+        for dx, dy in self.directions:
+            nx, ny = x, y
+            while True:
+                nx += dx
+                ny += dy
+                if 0 <= nx < 8 and 0 <= ny < 8:
+                    if board.grid[nx][ny] == " ":
+                        moves.append((nx, ny))
+                    elif isinstance(board.grid[nx][ny], Piece) and board.grid[nx][ny].getColor() != self.getColor():
+                        moves.append((nx, ny))
+                        break
+                    else:
+                        break
+                else:
+                    break
+        return moves
 
 class Pawn(Piece):
     def __init__(self, color, position):
@@ -40,32 +65,10 @@ class Pawn(Piece):
         
         return moves
 
-class Rook(Piece):
+class Rook(SlidingPiece):
     def __init__(self, color, position):
         super().__init__(color, position)
-    
-    def validMoves(self, board):
-        moves = []
-        x, y = self.getPosition()
-
-        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]
-
-        for dx, dy in directions:
-            nx, ny = x, y
-            while True:
-                nx += dx
-                ny += dy
-                if 0 <= nx < 8 and 0 <= ny < 8:
-                    if board.grid[nx][ny] == " ":
-                        moves.append((nx, ny))
-                    elif isinstance(board.grid[nx][ny], Piece) and board.grid[nx][ny].getColor() != self.getColor():
-                        moves.append((nx, ny))
-                        break
-                    else:
-                        break
-                else:
-                    break
-        return moves
+        self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]  
 
 class Knight(Piece):
     def __init__(self, color, position):
@@ -95,59 +98,15 @@ class Knight(Piece):
                     break
         return moves
 
-class Bishop(Piece):
+class Bishop(SlidingPiece):
     def __init__(self, color, position):
         super().__init__(color, position)
-    
-    def validMoves(self, board):
-        moves = []
-        x, y = self.getPosition()
+        self.directions = [(1, 1), (-1, -1), (1, -1), (-1, 1)]  
 
-        directions = [(1, 1), (-1, 1), (1, -1), (-1, -1)]
-
-        for dx, dy in directions:
-            nx, ny = x, y
-            while True:
-                nx += dx
-                ny += dy
-                if 0 <= nx < 8 and 0 <= ny < 8:
-                    if board.grid[nx][ny] == " ":
-                        moves.append((nx, ny))
-                    elif isinstance(board.grid[nx][ny], Piece) and board.grid[nx][ny].getColor() != self.getColor():
-                        moves.append((nx, ny))
-                        break
-                    else:
-                        break
-                else:
-                    break
-        return moves
-
-class Queen(Piece):
+class Queen(SlidingPiece):
     def __init__(self, color, position):
         super().__init__(color, position)
-    
-    def validMoves(self, board):
-        moves = []
-        x, y = self.getPosition()
-
-        directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, 1), (1, -1), (-1, -1)]
-
-        for dx, dy in directions:
-            nx, ny = x, y
-            while True:
-                nx += dx
-                ny += dy
-                if 0 <= nx < 8 and 0 <= ny < 8:
-                    if board.grid[nx][ny] == " ":
-                        moves.append((nx, ny))
-                    elif isinstance(board.grid[nx][ny], Piece) and board.grid[nx][ny].getColor() != self.getColor():
-                        moves.append((nx, ny))
-                        break
-                    else:
-                        break
-                else:
-                    break
-        return moves
+        self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]  
     
 class King(Piece):
 
@@ -230,7 +189,6 @@ class Board:
         piece.setPosition(end)
         game.switchTurn()
         return True
-        
 
     def display(self):
         for row in self.grid:
@@ -264,15 +222,15 @@ class Game:
         return self.turn
 
 #TEST
-board = Board()
+# board = Board()
 # pawn = Pawn("white", (1,0))
-rook = Rook("black", (3,3))
+# rook = Rook("black", (3,3))
 # knight = Knight("white", (3,3))
 # bishop = Bishop("white", (3,3))
 # queen = Queen("white", (3,3))
 # king = King("white", (3,3))
 # print(pawn.validMoves(board))
-print(rook.validMoves(board))
+# print(rook.validMoves(board))
 # print(knight.validMoves(board))
 # print(bishop.validMoves(board))
 # print(queen.validMoves(board))
