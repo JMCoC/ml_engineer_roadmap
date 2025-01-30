@@ -60,6 +60,10 @@ class Pawn(Piece):
                 moves.append((x + direction, y - 1))
             if y < 7 and isinstance(board.grid[x + direction][y + 1], Piece) and board.grid[x + direction][y + 1].getColor() != self.getColor():
                 moves.append((x + direction, y + 1))
+            if board.enPassant and (x + direction, y + 1) == board.enPassant:
+                moves.append(board.enPassant)
+            if board.enPassant and (x + direction, y - 1) == board.enPassant:
+                moves.append(board.enPassant)
         except IndexError:
             return moves
         
@@ -183,29 +187,30 @@ class Board:
 
     def __init__(self):
         self.grid = [[" " for _ in range(8)] for _ in range(8)]
+        self.enPassant = None
         self.initializeBoard()
     
     def initializeBoard(self):
-        self.grid[0][0] = Rook("white", (0, 0))
-        self.grid[0][7] = Rook("white", (0, 7))
-        self.grid[7][0] = Rook("black", (7, 0))
-        self.grid[7][7] = Rook("black", (7, 7))
+        # self.grid[0][0] = Rook("white", (0, 0))
+        # self.grid[0][7] = Rook("white", (0, 7))
+        # self.grid[7][0] = Rook("black", (7, 0))
+        # self.grid[7][7] = Rook("black", (7, 7))
 
-        self.grid[0][1] = Knight("white", (0, 1))
-        self.grid[0][6] = Knight("white", (0, 6))
-        self.grid[7][1] = Knight("black", (7, 1))
-        self.grid[7][6] = Knight("black", (7, 6))
+        # self.grid[0][1] = Knight("white", (0, 1))
+        # self.grid[0][6] = Knight("white", (0, 6))
+        # self.grid[7][1] = Knight("black", (7, 1))
+        # self.grid[7][6] = Knight("black", (7, 6))
 
-        self.grid[0][2] = Bishop("white", (0, 2))
-        self.grid[0][5] = Bishop("white", (0, 5))
-        self.grid[7][2] = Bishop("black", (7, 2))
-        self.grid[7][5] = Bishop("black", (7, 5))
+        # self.grid[0][2] = Bishop("white", (0, 2))
+        # self.grid[0][5] = Bishop("white", (0, 5))
+        # self.grid[7][2] = Bishop("black", (7, 2))
+        # self.grid[7][5] = Bishop("black", (7, 5))
         
-        self.grid[0][3] = Queen("white", (0, 3))
-        self.grid[7][3] = Queen("black", (7, 3))
+        # self.grid[0][3] = Queen("white", (0, 3))
+        # self.grid[7][3] = Queen("black", (7, 3))
         
-        self.grid[0][4] = King("white", (0, 4)) #check attribute (False)
-        self.grid[7][4] = King("black", (7, 4)) #check attribute (False)
+        # self.grid[0][4] = King("white", (0, 4)) #check attribute (False)
+        # self.grid[7][4] = King("black", (7, 4)) #check attribute (False)
 
         for i in range(8):
             self.grid[1][i] = Pawn("white", (1, i)) #1, i
@@ -215,15 +220,22 @@ class Board:
         #self.grid[3][0] = Pawn("white", (3, 0))
         #self.grid[2][0] = Pawn("black", (2, 0))
         #self.grid[2][2] = Pawn("black", (2, 2))
+        #enPassant
+        self.grid[3][1] = Pawn("black", (3,1))
+        self.grid[3][3] = Pawn("black", (3,3))
+        self.grid[4][5] = Pawn("white", (4,5))
 
     def movePiece(self, start, end):
         piece = self.grid[start[0]][start[1]]
         if piece == " " or piece.getColor() != game.getTurn():
             return False
 
-        valid_moves = piece.validMoves(self)
+        valid_moves = piece.validMoves(self)        
         if end not in valid_moves:
             return False
+
+        if isinstance(piece, Pawn) and end == self.enPassant:
+            self.grid[start[0]][end[1]] = " "
 
         self.grid[end[0]][end[1]] = piece
         self.grid[start[0]][start[1]] = " "
@@ -235,9 +247,15 @@ class Board:
         #         self.grid[x][y].setCheck(True)
         #         self.grid[x][y].inCheck(self, nextValidMoves)
         #         break
+
+        if isinstance(piece, Pawn) and abs(start[0] - end[0]) == 2:
+            self.enPassant = ((start[0] + end[0]) // 2, start[1])
+        else:
+            self.enPassant = None
+
         if isinstance(piece, Pawn) and ((piece.getPosition()[0] == 7 and piece.getColor() == "white") or (piece.getPosition()[0] == 0 and piece.getColor() == "black")):
             piece.promotion(piece.getColor(), piece.getPosition(), self)
-
+            
         game.switchTurn()
         return True
 
