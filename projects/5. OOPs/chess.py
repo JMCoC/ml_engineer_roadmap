@@ -140,24 +140,15 @@ class Queen(SlidingPiece):
         self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]  
     
 class King(Piece):
-    def __init__(self, color, position): #Add check attribute after
-        # self.__check = check
+    def __init__(self, color, position, check): #Add check attribute after
+        self.__check = check
         super().__init__(color, position)
-        
-    # def getCheck(self):
-    #     return self.__check
+
+    def getCheck(self):
+        return self.__check
     
-    # def setCheck(self, check):
-    #     self.__check = check
-    
-    # def inCheck(self, board, nextMoves):
-    #     moves = self.validMoves(board)
-    #     if self.getCheck() == True:
-    #         for move in nextMoves:
-    #             if move in moves:
-    #                 moves.remove(move)
-    #         print(moves)
-    #         return moves
+    def setCheck(self, check):
+        self.__check = check
 
     def validMoves(self, board):
         moves = []
@@ -196,58 +187,71 @@ class Board:
         # self.grid[7][0] = Rook("black", (7, 0))
         # self.grid[7][7] = Rook("black", (7, 7))
 
-        # self.grid[0][1] = Knight("white", (0, 1))
+        self.grid[7][4] = Knight("white", (7, 4)) #(0,1)
         # self.grid[0][6] = Knight("white", (0, 6))
         # self.grid[7][1] = Knight("black", (7, 1))
         # self.grid[7][6] = Knight("black", (7, 6))
 
-        # self.grid[0][2] = Bishop("white", (0, 2))
+        self.grid[2][4] = Bishop("white", (2, 4)) #(0, 2)
         # self.grid[0][5] = Bishop("white", (0, 5))
         # self.grid[7][2] = Bishop("black", (7, 2))
         # self.grid[7][5] = Bishop("black", (7, 5))
         
-        # self.grid[0][3] = Queen("white", (0, 3))
+        self.grid[0][0] = Queen("white", (0, 0)) #(0, 3)
         # self.grid[7][3] = Queen("black", (7, 3))
         
         # self.grid[0][4] = King("white", (0, 4)) #check attribute (False)
-        # self.grid[7][4] = King("black", (7, 4)) #check attribute (False)
+        self.grid[6][1] = King("black", (6, 1), False) #check attribute (False) (7, 4)
 
-        for i in range(8):
-            self.grid[1][i] = Pawn("white", (1, i)) #1, i
-            self.grid[6][i] = Pawn("black", (6, i)) #6, i
-        #pass
-        #TEST
-        #self.grid[3][0] = Pawn("white", (3, 0))
-        #self.grid[2][0] = Pawn("black", (2, 0))
-        #self.grid[2][2] = Pawn("black", (2, 2))
-        #enPassant
-        self.grid[3][1] = Pawn("black", (3,1))
-        self.grid[3][3] = Pawn("black", (3,3))
-        self.grid[4][5] = Pawn("white", (4,5))
+        # for i in range(8):
+        #     self.grid[1][i] = Pawn("white", (1, i)) #1, i
+        #     self.grid[6][i] = Pawn("black", (6, i)) #6, i
+
+    def isInCheck(self, color):
+        allEnemyMoves = [move for i in range(8) for j in range(8) if isinstance(self.grid[i][j], Piece) and self.grid[i][j].getColor() != color for move in self.grid[i][j].validMoves(self)]
+        print(allEnemyMoves)
+        for x, y in allEnemyMoves:
+            if isinstance(self.grid[x][y], King) and self.grid[x][y].getColor() == color:
+                self.grid[x][y].setCheck(True)
+                print(self.grid[x][y].getCheck())
+                return True
+            
+        return False
 
     def movePiece(self, start, end):
         piece = self.grid[start[0]][start[1]]
         if piece == " " or piece.getColor() != game.getTurn():
             return False
 
-        valid_moves = piece.validMoves(self)        
+        valid_moves = piece.validMoves(self)
         if end not in valid_moves:
             return False
 
         if isinstance(piece, Pawn) and end == self.enPassant:
             self.grid[start[0]][end[1]] = " "
-
+        enemyPiece = self.grid[end[0]][end[1]]
         self.grid[end[0]][end[1]] = piece
         self.grid[start[0]][start[1]] = " "
         piece.setPosition(end)
-        # nextValidMoves = piece.validMoves(self)
-        # for x, y in nextValidMoves:
-        #     if isinstance(self.grid[x][y], King) and self.grid[x][y].getColor() != piece.getColor():
-        #         print("Atacando rey enemigo")
-        #         self.grid[x][y].setCheck(True)
-        #         self.grid[x][y].inCheck(self, nextValidMoves)
-        #         break
 
+        for i in range(8):
+            for j in range(8):
+                if isinstance(self.grid[i][j], King) and self.grid[i][j].getColor() == game.getTurn():
+                    if self.isInCheck(game.getTurn()):
+                        self.grid[i][j].setCheck(True)
+                        if isinstance(enemyPiece, Piece):
+                            self.grid[end[0]][end[1]] = enemyPiece
+                        else:
+                            self.grid[end[0]][end[1]] = " "
+                        self.grid[start[0]][start[1]] = piece
+                        piece.setPosition(start)
+                        return False
+                    else:
+                        self.grid[i][j].setCheck(False)
+                        self.grid[end[0]][end[1]] = piece
+                        self.grid[start[0]][start[1]] = " "
+                        piece.setPosition(end)
+                
         if isinstance(piece, Pawn) and abs(start[0] - end[0]) == 2:
             self.enPassant = ((start[0] + end[0]) // 2, start[1])
         else:
@@ -272,6 +276,8 @@ class Game:
     def play(self):
         while True:
             self.board.display()
+            if self.board.isInCheck(self.turn):
+                print(f"{self.turn} is in check.")
             try:
                 s1, s2 = map(int, input("Enter start position (x y): ").split())
                 e1, e2 = map(int, input("Enter end position (x y): ").split())
@@ -290,19 +296,5 @@ class Game:
     def getTurn(self):
         return self.turn
 
-#TEST
-# board = Board()
-# pawn = Pawn("white", (1,0))
-# rook = Rook("black", (3,3))
-# knight = Knight("white", (3,3))
-# bishop = Bishop("white", (3,3))
-# queen = Queen("white", (3,3))
-# king = King("white", (3,3))
-# print(pawn.validMoves(board))
-# print(rook.validMoves(board))
-# print(knight.validMoves(board))
-# print(bishop.validMoves(board))
-# print(queen.validMoves(board))
-# print(king.validMoves(board))
 game = Game()
 game.play()
