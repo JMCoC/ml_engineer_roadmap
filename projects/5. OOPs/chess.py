@@ -182,41 +182,69 @@ class Board:
         self.initializeBoard()
     
     def initializeBoard(self):
-        # self.grid[0][0] = Rook("white", (0, 0))
-        # self.grid[0][7] = Rook("white", (0, 7))
-        # self.grid[7][0] = Rook("black", (7, 0))
-        # self.grid[7][7] = Rook("black", (7, 7))
+        self.grid[0][0] = Rook("white", (0, 0))
+        self.grid[0][7] = Rook("white", (0, 7))
+        self.grid[7][0] = Rook("black", (7, 0))
+        self.grid[7][7] = Rook("black", (7, 7))
 
-        self.grid[7][4] = Knight("white", (7, 4)) #(0,1)
-        # self.grid[0][6] = Knight("white", (0, 6))
-        # self.grid[7][1] = Knight("black", (7, 1))
-        # self.grid[7][6] = Knight("black", (7, 6))
+        self.grid[0][1] = Knight("white", (0, 1)) #(0,1)
+        self.grid[0][6] = Knight("white", (0, 6))
+        self.grid[7][1] = Knight("black", (7, 1))
+        self.grid[7][6] = Knight("black", (7, 6))
 
-        self.grid[2][4] = Bishop("white", (2, 4)) #(0, 2)
-        # self.grid[0][5] = Bishop("white", (0, 5))
-        # self.grid[7][2] = Bishop("black", (7, 2))
-        # self.grid[7][5] = Bishop("black", (7, 5))
+        self.grid[0][2] = Bishop("white", (0, 2)) #(0, 2)
+        self.grid[0][5] = Bishop("white", (0, 5))
+        self.grid[7][2] = Bishop("black", (7, 2))
+        self.grid[7][5] = Bishop("black", (7, 5))
         
-        self.grid[0][0] = Queen("white", (0, 0)) #(0, 3)
-        # self.grid[7][3] = Queen("black", (7, 3))
+        self.grid[0][3] = Queen("white", (0, 3)) #(0, 3)
+        self.grid[7][3] = Queen("black", (7, 3)) #(7,3)
         
-        # self.grid[0][4] = King("white", (0, 4)) #check attribute (False)
-        self.grid[6][1] = King("black", (6, 1), False) #check attribute (False) (7, 4)
+        self.grid[0][4] = King("white", (0, 4), False) #check attribute (False)
+        self.grid[7][4] = King("black", (7, 4), False) #check attribute (False) (7, 4)
 
-        # for i in range(8):
-        #     self.grid[1][i] = Pawn("white", (1, i)) #1, i
-        #     self.grid[6][i] = Pawn("black", (6, i)) #6, i
+        for i in range(8):
+            self.grid[1][i] = Pawn("white", (1, i)) #1, i
+            self.grid[6][i] = Pawn("black", (6, i)) #6, i
 
     def isInCheck(self, color):
         allEnemyMoves = [move for i in range(8) for j in range(8) if isinstance(self.grid[i][j], Piece) and self.grid[i][j].getColor() != color for move in self.grid[i][j].validMoves(self)]
-        print(allEnemyMoves)
         for x, y in allEnemyMoves:
             if isinstance(self.grid[x][y], King) and self.grid[x][y].getColor() == color:
                 self.grid[x][y].setCheck(True)
-                print(self.grid[x][y].getCheck())
                 return True
-            
         return False
+
+    def isCheckMate(self, color):
+        # allAllyMoves = [move for i in range(8) for j in range(8) if isinstance(self.grid[i][j], Piece) and self.grid[i][j].getColor() == color for move in self.grid[i][j].validMoves(self)]
+        if not self.isInCheck(color):
+            return False
+        else:
+            for i in range(8):
+                for j in range(8):
+                    if isinstance(self.grid[i][j], Piece) and self.grid[i][j].getColor() == game.getTurn():
+                        piece = self.grid[i][j]
+                        start = piece.getPosition()
+                        valid_Moves = piece.validMoves(self)    
+                        for end in valid_Moves:
+                            enemyPiece = self.grid[end[0]][end[1]]
+                            self.grid[end[0]][end[1]] = piece
+                            self.grid[start[0]][start[1]] = " "
+                            piece.setPosition(end)
+                            if self.isInCheck(game.getTurn()):
+                                if isinstance(enemyPiece, Piece):
+                                    self.grid[end[0]][end[1]] = enemyPiece
+                                else:
+                                    self.grid[end[0]][end[1]] = " "
+                                self.grid[start[0]][start[1]] = piece
+                                piece.setPosition(start)
+                            else:
+                                self.grid[end[0]][end[1]] = piece
+                                self.grid[start[0]][start[1]] = " "
+                                piece.setPosition(end)
+                                return False
+            return True
+
 
     def movePiece(self, start, end):
         piece = self.grid[start[0]][start[1]]
@@ -229,6 +257,7 @@ class Board:
 
         if isinstance(piece, Pawn) and end == self.enPassant:
             self.grid[start[0]][end[1]] = " "
+
         enemyPiece = self.grid[end[0]][end[1]]
         self.grid[end[0]][end[1]] = piece
         self.grid[start[0]][start[1]] = " "
@@ -276,6 +305,9 @@ class Game:
     def play(self):
         while True:
             self.board.display()
+            if self.board.isCheckMate(self.turn):
+                print(f"Checkmate! {self.turn} loses.")
+                break
             if self.board.isInCheck(self.turn):
                 print(f"{self.turn} is in check.")
             try:
