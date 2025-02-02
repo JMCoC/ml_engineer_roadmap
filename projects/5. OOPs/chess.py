@@ -208,11 +208,13 @@ class Board:
         #     self.grid[6][i] = Pawn("black", (6, i)) #6, i
 
         #TEST
-        self.grid[1][1] = Rook("black", (1, 1))
         self.grid[3][0] = Rook("black", (3, 0))
-        #self.grid[7][3] = Queen("black", (7, 3)) #(0, 3)
-        self.grid[2][5] = Pawn("black", (2, 5)) #1, i
-        self.grid[3][6] = Pawn("black", (3, 6)) #1, i
+        self.grid[1][1] = Rook("black", (1, 1))
+        self.grid[7][3] = Queen("black", (7, 3)) #(0, 3)
+        self.grid[2][5] = Pawn("black", (2, 5)) #6, i
+        self.grid[3][6] = Pawn("black", (3, 6)) #6, i
+        self.grid[4][7] = Pawn("black", (4, 7)) #6, i
+        self.grid[1][7] = Pawn("white", (1, 7)) #6, i
         self.grid[2][4] = King("white", (2, 4), False) #check attribute (False) (7, 4)
 
     def isInCheck(self, color):
@@ -256,6 +258,32 @@ class Board:
                                 return False
             return True
 
+    def isStaleMate(self, color):
+        allAllyMoves = [move for i in range(8) for j in range(8) if isinstance(self.grid[i][j], Piece) and self.grid[i][j].getColor() == color for move in self.grid[i][j].validMoves(self)]
+        for i in range(8):
+                for j in range(8):
+                    if isinstance(self.grid[i][j], Piece) and self.grid[i][j].getColor() == game.getTurn():
+                        piece = self.grid[i][j]
+                        start = piece.getPosition()
+                        valid_Moves = piece.validMoves(self)    
+                        for end in valid_Moves:
+                            enemyPiece = self.grid[end[0]][end[1]]
+                            self.grid[end[0]][end[1]] = piece
+                            self.grid[start[0]][start[1]] = " "
+                            piece.setPosition(end)
+                            if self.isInCheck(game.getTurn()):
+                                allAllyMoves.remove(end)
+                            if isinstance(enemyPiece, Piece):
+                                self.grid[end[0]][end[1]] = enemyPiece
+                            else:
+                                self.grid[end[0]][end[1]] = " "
+                            self.grid[start[0]][start[1]] = piece
+                            piece.setPosition(start)
+        print(allAllyMoves)
+        if len(allAllyMoves) == 0:
+            return True
+        else:
+            return False
 
     def movePiece(self, start, end):
         piece = self.grid[start[0]][start[1]]
@@ -321,6 +349,9 @@ class Game:
                 break
             if self.board.isInCheck(self.turn):
                 print(f"{self.turn} is in check.")
+            if self.board.isStaleMate(self.turn):
+                print(f"Stalemate!")
+                break
             try:
                 s1, s2 = map(int, input("Enter start position (x y): ").split())
                 e1, e2 = map(int, input("Enter end position (x y): ").split())
