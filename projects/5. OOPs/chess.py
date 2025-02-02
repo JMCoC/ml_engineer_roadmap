@@ -182,30 +182,38 @@ class Board:
         self.initializeBoard()
     
     def initializeBoard(self):
-        self.grid[0][0] = Rook("white", (0, 0))
-        self.grid[0][7] = Rook("white", (0, 7))
-        self.grid[7][0] = Rook("black", (7, 0))
-        self.grid[7][7] = Rook("black", (7, 7))
+        # self.grid[0][0] = Rook("white", (0, 0))
+        # self.grid[0][7] = Rook("white", (0, 7))
+        # self.grid[7][0] = Rook("black", (7, 0))
+        # self.grid[7][7] = Rook("black", (7, 7))
 
-        self.grid[0][1] = Knight("white", (0, 1)) #(0,1)
-        self.grid[0][6] = Knight("white", (0, 6))
-        self.grid[7][1] = Knight("black", (7, 1))
-        self.grid[7][6] = Knight("black", (7, 6))
+        # self.grid[0][1] = Knight("white", (0, 1)) #(0,1)
+        # self.grid[0][6] = Knight("white", (0, 6))
+        # self.grid[7][1] = Knight("black", (7, 1))
+        # self.grid[7][6] = Knight("black", (7, 6))
 
-        self.grid[0][2] = Bishop("white", (0, 2)) #(0, 2)
-        self.grid[0][5] = Bishop("white", (0, 5))
-        self.grid[7][2] = Bishop("black", (7, 2))
-        self.grid[7][5] = Bishop("black", (7, 5))
+        # self.grid[0][2] = Bishop("white", (0, 2)) #(0, 2)
+        # self.grid[0][5] = Bishop("white", (0, 5))
+        # self.grid[7][2] = Bishop("black", (7, 2))
+        # self.grid[7][5] = Bishop("black", (7, 5))
         
-        self.grid[0][3] = Queen("white", (0, 3)) #(0, 3)
-        self.grid[7][3] = Queen("black", (7, 3)) #(7,3)
+        # self.grid[0][3] = Queen("white", (0, 3)) #(0, 3)
+        # self.grid[7][3] = Queen("black", (7, 3)) #(7,3)
         
-        self.grid[0][4] = King("white", (0, 4), False) #check attribute (False)
-        self.grid[7][4] = King("black", (7, 4), False) #check attribute (False) (7, 4)
+        # self.grid[0][4] = King("white", (0, 4), False) #check attribute (False)
+        # self.grid[7][4] = King("black", (7, 4), False) #check attribute (False) (7, 4)
 
-        for i in range(8):
-            self.grid[1][i] = Pawn("white", (1, i)) #1, i
-            self.grid[6][i] = Pawn("black", (6, i)) #6, i
+        # for i in range(8):
+        #     self.grid[1][i] = Pawn("white", (1, i)) #1, i
+        #     self.grid[6][i] = Pawn("black", (6, i)) #6, i
+
+        #TEST
+        self.grid[1][1] = Rook("black", (1, 1))
+        self.grid[3][0] = Rook("black", (3, 0))
+        #self.grid[7][3] = Queen("black", (7, 3)) #(0, 3)
+        self.grid[2][5] = Pawn("black", (2, 5)) #1, i
+        self.grid[3][6] = Pawn("black", (3, 6)) #1, i
+        self.grid[2][4] = King("white", (2, 4), False) #check attribute (False) (7, 4)
 
     def isInCheck(self, color):
         allEnemyMoves = [move for i in range(8) for j in range(8) if isinstance(self.grid[i][j], Piece) and self.grid[i][j].getColor() != color for move in self.grid[i][j].validMoves(self)]
@@ -239,9 +247,12 @@ class Board:
                                 self.grid[start[0]][start[1]] = piece
                                 piece.setPosition(start)
                             else:
-                                self.grid[end[0]][end[1]] = piece
-                                self.grid[start[0]][start[1]] = " "
-                                piece.setPosition(end)
+                                if isinstance(enemyPiece, Piece):
+                                    self.grid[end[0]][end[1]] = enemyPiece
+                                else:
+                                    self.grid[end[0]][end[1]] = " "
+                                self.grid[start[0]][start[1]] = piece
+                                piece.setPosition(start)
                                 return False
             return True
 
