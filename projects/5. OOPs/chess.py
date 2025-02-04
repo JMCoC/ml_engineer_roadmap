@@ -97,9 +97,16 @@ class Pawn(Piece):
             print("Invalid option")
 
 class Rook(SlidingPiece):
-    def __init__(self, color, position):
+    def __init__(self, color, position, moved):
+        self.__moved = moved
         super().__init__(color, position)
         self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]  
+    
+    def getMove(self):
+        return self.__moved
+    
+    def setMove(self, moved):
+        self.__moved = moved
 
 class Knight(Piece):
     def __init__(self, color, position):
@@ -140,7 +147,8 @@ class Queen(SlidingPiece):
         self.directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (-1, -1), (1, -1), (-1, 1)]  
     
 class King(Piece):
-    def __init__(self, color, position, check): #Add check attribute after
+    def __init__(self, color, position, check, moved):
+        self.__moved = moved 
         self.__check = check
         super().__init__(color, position)
 
@@ -149,6 +157,12 @@ class King(Piece):
     
     def setCheck(self, check):
         self.__check = check
+
+    def getMove(self):
+        return self.__moved
+    
+    def setMove(self, moved):
+        self.__moved = moved
 
     def validMoves(self, board):
         moves = []
@@ -172,6 +186,26 @@ class King(Piece):
                         break
                 else:
                     break
+
+        if not self.getMove() and not self.getCheck() and self.getColor() == "white":
+            if isinstance(board.grid[0][5], str) and isinstance(board.grid[0][6], str) and isinstance(board.grid[0][7], Rook):
+                rook = board.grid[0][7]
+                if not rook.getMove():
+                    moves.append((0, 6))
+            if isinstance(board.grid[0][3], str) and isinstance(board.grid[0][2], str) and isinstance(board.grid[0][1], str) and isinstance(board.grid[0][0], Rook):
+                rook = board.grid[0][0]
+                if not rook.getMove():
+                    moves.append((0, 2))
+
+        if not self.getMove() and not self.getCheck() and self.getColor() == "black":
+            if isinstance(board.grid[7][5], str) and isinstance(board.grid[7][6], str) and isinstance(board.grid[7][7], Rook):
+                rook = board.grid[7][7]
+                if not rook.getMove():
+                    moves.append((7, 6))
+            if isinstance(board.grid[7][3], str) and isinstance(board.grid[7][2], str) and isinstance(board.grid[7][1], str) and isinstance(board.grid[7][0], Rook):
+                rook = board.grid[7][0]
+                if not rook.getMove():
+                    moves.append((7, 2))
         return moves
 
 class Board:
@@ -182,40 +216,30 @@ class Board:
         self.initializeBoard()
     
     def initializeBoard(self):
-        # self.grid[0][0] = Rook("white", (0, 0))
-        # self.grid[0][7] = Rook("white", (0, 7))
-        # self.grid[7][0] = Rook("black", (7, 0))
-        # self.grid[7][7] = Rook("black", (7, 7))
+        self.grid[0][0] = Rook("white", (0, 0), False)
+        self.grid[0][7] = Rook("white", (0, 7), False)
+        self.grid[7][0] = Rook("black", (7, 0), False)
+        self.grid[7][7] = Rook("black", (7, 7), False)
 
-        # self.grid[0][1] = Knight("white", (0, 1)) #(0,1)
-        # self.grid[0][6] = Knight("white", (0, 6))
-        # self.grid[7][1] = Knight("black", (7, 1))
-        # self.grid[7][6] = Knight("black", (7, 6))
+        self.grid[0][1] = Knight("white", (0, 1)) 
+        self.grid[0][6] = Knight("white", (0, 6))
+        self.grid[7][1] = Knight("black", (7, 1))
+        self.grid[7][6] = Knight("black", (7, 6))
 
-        # self.grid[0][2] = Bishop("white", (0, 2)) #(0, 2)
-        # self.grid[0][5] = Bishop("white", (0, 5))
-        # self.grid[7][2] = Bishop("black", (7, 2))
-        # self.grid[7][5] = Bishop("black", (7, 5))
+        self.grid[0][2] = Bishop("white", (0, 2)) 
+        self.grid[0][5] = Bishop("white", (0, 5))
+        self.grid[7][2] = Bishop("black", (7, 2))
+        self.grid[7][5] = Bishop("black", (7, 5))
         
-        # self.grid[0][3] = Queen("white", (0, 3)) #(0, 3)
-        # self.grid[7][3] = Queen("black", (7, 3)) #(7,3)
+        self.grid[0][3] = Queen("white", (0, 3)) 
+        self.grid[7][3] = Queen("black", (7, 3)) 
         
-        # self.grid[0][4] = King("white", (0, 4), False) #check attribute (False)
-        # self.grid[7][4] = King("black", (7, 4), False) #check attribute (False) (7, 4)
+        self.grid[0][4] = King("white", (0, 4), False, False) 
+        self.grid[7][4] = King("black", (7, 4), False, False) 
 
-        # for i in range(8):
-        #     self.grid[1][i] = Pawn("white", (1, i)) #1, i
-        #     self.grid[6][i] = Pawn("black", (6, i)) #6, i
-
-        #TEST
-        self.grid[3][0] = Rook("black", (3, 0))
-        self.grid[1][1] = Rook("black", (1, 1))
-        self.grid[7][3] = Queen("black", (7, 3)) #(0, 3)
-        self.grid[2][5] = Pawn("black", (2, 5)) #6, i
-        self.grid[3][6] = Pawn("black", (3, 6)) #6, i
-        self.grid[4][7] = Pawn("black", (4, 7)) #6, i
-        self.grid[1][7] = Pawn("white", (1, 7)) #6, i
-        self.grid[2][4] = King("white", (2, 4), False) #check attribute (False) (7, 4)
+        for i in range(8):
+            self.grid[1][i] = Pawn("white", (1, i)) 
+            self.grid[6][i] = Pawn("black", (6, i)) 
 
     def isInCheck(self, color):
         allEnemyMoves = [move for i in range(8) for j in range(8) if isinstance(self.grid[i][j], Piece) and self.grid[i][j].getColor() != color for move in self.grid[i][j].validMoves(self)]
@@ -226,7 +250,6 @@ class Board:
         return False
 
     def isCheckMate(self, color):
-        # allAllyMoves = [move for i in range(8) for j in range(8) if isinstance(self.grid[i][j], Piece) and self.grid[i][j].getColor() == color for move in self.grid[i][j].validMoves(self)]
         if not self.isInCheck(color):
             return False
         else:
@@ -279,7 +302,6 @@ class Board:
                                 self.grid[end[0]][end[1]] = " "
                             self.grid[start[0]][start[1]] = piece
                             piece.setPosition(start)
-        print(allAllyMoves)
         if len(allAllyMoves) == 0:
             return True
         else:
@@ -296,6 +318,20 @@ class Board:
 
         if isinstance(piece, Pawn) and end == self.enPassant:
             self.grid[start[0]][end[1]] = " "
+
+        if isinstance(piece, King) and abs(start[1] - end[1]) == 2:
+            if end[1] == 6:  
+                self.grid[start[0]][5] = self.grid[start[0]][7]
+                self.grid[start[0]][7] = " "
+                self.grid[start[0]][5].setPosition((start[0], 5))
+                self.grid[start[0]][5].setMove(True)
+                piece.setMove(True)
+            elif end[1] == 2:  
+                self.grid[start[0]][3] = self.grid[start[0]][0]
+                self.grid[start[0]][0] = " "
+                self.grid[start[0]][3].setPosition((start[0], 3))
+                self.grid[start[0]][3].setMove(True)
+                piece.setMove(True)
 
         enemyPiece = self.grid[end[0]][end[1]]
         self.grid[end[0]][end[1]] = piece
@@ -319,7 +355,10 @@ class Board:
                         self.grid[end[0]][end[1]] = piece
                         self.grid[start[0]][start[1]] = " "
                         piece.setPosition(end)
-                
+
+        if isinstance(piece, King) or isinstance(piece, Rook):
+            piece.setMove(True)
+
         if isinstance(piece, Pawn) and abs(start[0] - end[0]) == 2:
             self.enPassant = ((start[0] + end[0]) // 2, start[1])
         else:
