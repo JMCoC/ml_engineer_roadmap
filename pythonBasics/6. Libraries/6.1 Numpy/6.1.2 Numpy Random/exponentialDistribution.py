@@ -24,3 +24,9 @@ print(x-y)
 #Relation with Poisson Distribution
 #Poisson distribution deals with number of occurences of an event in a time period whereas
 #exponential distribution deals with the time between these events.
+
+"""
+There's more distribution functions available in numpy.random package.
+Like pareto, rayleigh, zipf and chi square etc.
+You can read more about them here: https://numpy.org/doc/stable/reference/random/generator.html
+"""
