@@ -53,3 +53,7 @@ print(myadd([1, 2, 3, 4], [5, 6, 7, 8]))
 #A ufunc should return <class 'numpy.ufunc'>.
 
 print(type(np.add))
+
+#If it is not a ufunc, it will return <class 'function'>.
+
+print(type(np.concatenate))
