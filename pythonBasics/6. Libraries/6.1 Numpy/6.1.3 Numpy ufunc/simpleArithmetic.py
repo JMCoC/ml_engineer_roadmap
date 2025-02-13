@@ -129,3 +129,64 @@ print(np.gcd(num1, num2)) #2 cause 4/2=2 and 6/2=3
 
 arr = np.array([20, 8, 32, 36, 16])
 print(np.gcd.reduce(arr)) #4 cause 20/4=5, 8/4=2, 32/4=8, 36/4=9, 16/4=4
+
+#Trigonometric Functions
+
+#Sine
+a = np.array([0, 30, 45, 60, 90])
+print(np.sin(a))
+
+#Cosine
+print(np.cos(a))
+
+#Tangent
+print(np.tan(a))
+
+#Degrees to Radians
+a = np.array([90, 180, 270, 360])
+print(np.deg2rad(a))
+
+#Radians to Degrees
+a = np.array([np.pi/2, np.pi, 3*np.pi/2, 2*np.pi])
+print(np.rad2deg(a))
+
+#Finding Angles
+
+#Arcsin|
+a = np.array([0, 0.5, 1])
+print(np.arcsin(a))
+
+#Arccos
+print(np.arccos(a))
+
+#Arctan
+print(np.arctan(a))
+
+#Hypotenuse
+base = 3
+perpendicular = 4
+print(np.hypot(base, perpendicular)) #5 cause sqrt(3^2+4^2)=5
+
+#Hyperbolic Functions
+
+#Sinh
+a = np.array([np.pi/2, np.pi/3, np.pi/4, np.pi/5])
+print(np.sinh(a))
+
+#Cosh
+print(np.cosh(a))
+
+#Tanh
+print(np.tanh(a))
+
+#Finding Angles
+
+#Arcsinh
+a = np.array([0, 0.5, 1])
+print(np.arcsinh(a))
+
+#Arccosh
+print(np.arccosh(a))
+
+#Arctanh
+print(np.arctanh(a))
