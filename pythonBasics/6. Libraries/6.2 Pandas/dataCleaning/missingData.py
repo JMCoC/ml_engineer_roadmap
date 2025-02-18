@@ -78,3 +78,28 @@ Fill NaN values using an interpolation method.
 
 df = pd.DataFrame({'A': [1, 2, np.nan, 4, 5], 'B': [10, 20, 30, np.nan, 50]})
 print(df.interpolate(method='linear')) # Fills the missing values using linear interpolation
+
+#Dropping missing values (dropna())
+"""
+Drop the rows where at least one element is missing.
+1. axis: 0 or 1
+2. how: any, all (any: drops the row if any element is missing, all: drops the row if all elements are missing)
+3. thresh: int, default None (minimum number of non-NA values to keep the row)
+4. subset: array-like (drops the row if any of the elements in the subset are missing)
+5. inplace: if True, drops the missing values in the original DataFrame (this modifies the original DataFrame)
+6. ignore_index: if True, the resulting axis will be labeled 0, 1, …, n - 1
+"""
+
+df = pd.DataFrame({'Name': ['Tom', 'Nick', 'John', 'Alice'], 
+                    'Toy': ['Car', 'Robot', np.nan, 'Bike'],
+                    'Born': [pd.NaT, pd.Timestamp('2020-01-01'), pd.Timestamp('2020-01-01'), pd.NaT]})
+
+print(df.dropna()) # Drops the rows where at least one element is missing                    
+print(df.dropna(axis=1)) # Drops the columns where at least one element is missing
+print(df.dropna(how='all')) # Drops the rows where all elements are missing
+print(df.dropna(subset=['Toy'])) # Drops the rows where Toy is missing
+print(df.dropna(thresh=3)) # Drops the rows where at least 3 elements are missing
+
+df = pd.read_csv('pythonBasics/CSV/nba.csv')
+new_df = df.dropna(axis=0, how='any')
+print(len(df), len(new_df)) # Prints the number of rows in the original and new DataFrame
