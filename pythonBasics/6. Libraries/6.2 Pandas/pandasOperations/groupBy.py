@@ -36,3 +36,75 @@ df.groupby(['Name', 'Qualification'])
 print(df.groupby(['Name', 'Qualification']).groups)
 df2 = df.groupby(['Name', 'Qualification'])
 print(df2.first())
+
+#Iterating through groups
+
+for name, group in df.groupby('Name'): 
+    print(name) 
+    print(group) 
+    print()
+
+#Select a group (get_group)
+
+grp = df.groupby('Name')
+print(grp.get_group('Jai'))
+
+grp2 = df.groupby(['Name', 'Qualification'])
+print(grp2.get_group(('Jai', 'MCA')))
+
+print(df.groupby('Name').get_group('Jai'))
+
+#Applying function to group
+
+#Aggregation
+"""
+Aggregation is a process in which we compute a summary statistic
+about each group. For example, we might want to compute the average
+age for each name. (.agg() or .aggregate() they are same)
+1. func: function, str, list or dict
+2. axis: int, default 0 (0 or 'index' for row-wise, 1 or 'columns' for column-wise)
+3. *args: positional arguments passed to func
+4. **kwargs: keyword arguments passed to func
+Returns: scalar, Series or DataFrame
+"""
+
+group1 = df.groupby('Name')
+print(group1['Age'].agg('sum'))
+
+group2 = df.groupby(['Name', 'Qualification'])
+print(group2['Age'].agg('mean'))
+
+#multiple functions
+
+print(group1['Age'].agg(['sum', 'mean', 'std']))
+
+#Transformation
+"""
+Transformation is a process in which we perform some group-specific
+computation and return a like-indexed object.
+1. func: function, str, list or dict
+2. axis: int, default 0 (0 or 'index' for row-wise, 1 or 'columns' for column-wise)
+3. *args: positional arguments passed to func
+4. **kwargs: keyword arguments passed to func
+Returns: DataFrame that must have the same length as input
+"""
+
+group1 = df.groupby('Name')
+print(group1['Age'].transform(lambda x: x - x.mean()))
+
+sc = lambda x: (x - x.mean()) / x.std()
+print(group1['Age'].transform(sc))
+
+print(group1['Name'].transform(lambda x: x.str.upper()))
+
+#Filteration
+"""
+Filtration allows you to drop entire groups based on a condition.
+1. func: function, str, list or dict
+2. dropna: bool, default True
+"""
+
+df = pd.read_csv('pythonBasics/CSV/nba.csv')
+
+filter1 = df.groupby('Team').filter(lambda x: x['Salary'].mean() >= 7000000)
+print(filter1)
