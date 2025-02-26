@@ -53,3 +53,56 @@ plt.ylabel('High')
 plt.title('Share Highest Price Over Time')
 
 plt.show()
+
+#Resampling Time Series Data
+"""
+Resampling is the process of converting the time series data to a different frequency.
+1. rule: The frequency to convert the data to. (D(Day), ME(Month), YE(Year), H(Hour), etc.)
+"""
+
+
+sampleDf = df.resample('ME').mean(numeric_only=True)
+
+sns.set(style="whitegrid")
+
+plt.figure(figsize=(12, 6))
+sns.lineplot(data=sampleDf, x=sampleDf.index, y='High', label='High Price Month', color='blue')
+
+plt.xlabel('Date')
+plt.ylabel('High')
+plt.title('Share Highest Price Over Time')
+
+plt.show()
+
+#Smoothing Time Series Data
+
+#Differencing
+
+# Differencing
+df['high_diff'] = df['High'].diff()
+
+# Plotting
+plt.figure(figsize=(12, 6))
+plt.plot(df['High'], label='Original High', color='blue')
+plt.plot(df['high_diff'], label='Differenced High', linestyle='--', color='green')
+plt.legend()
+plt.title('Original vs Differenced High')
+plt.show()
+
+#Moving Average
+
+# Moving Average
+window_size = 120
+df['high_smoothed'] = df['High'].rolling(window=window_size).mean()
+
+# Plotting
+plt.figure(figsize=(12, 6))
+
+plt.plot(df['High'], label='Original High', color='blue')
+plt.plot(df['high_smoothed'], label=f'Moving Average (Window={window_size})', linestyle='--', color='orange')
+
+plt.xlabel('Date')
+plt.ylabel('High')
+plt.title('Original vs Moving Average')
+plt.legend()
+plt.show()
