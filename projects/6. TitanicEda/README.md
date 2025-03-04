@@ -10,14 +10,14 @@ Explore the factors that influenced passagener survival
 ## **Main Findings**
 
 ### 1. What factors determined which passenger could survive?  
-   - **Gender:**: (projects/6. TitanicEda/reports/genderpercent.png)
+   - **Gender:**: (![projects/6. TitanicEda/reports/genderpercent.png](https://raw.githubusercontent.com/JMCoC/ml_engineer_roadmap/refs/heads/main/projects/6.%20TitanicEda/reports/genderpercent.png))
    - **Explication**: 74% of women survived, compared to 19% of men. This reflects the 'Women and children first' policy.  
 
-   - **Social class**: (projects/6. TitanicEda/reports/socialclass.png).  
+   - **Social class**: (![projects/6. TitanicEda/reports/socialclass.png](https://raw.githubusercontent.com/JMCoC/ml_engineer_roadmap/refs/heads/main/projects/6.%20TitanicEda/reports/socialclass.png))
    - **Explication**: We can see that higher status could represent a better chance of survival, perhaps influenced by evacuation priority. 
 
 ### 2. How did social class and gender affect chances of survival?  
-   (projects/6. TitanicEda/reports/classandgernder.png).
+   (![projects/6. TitanicEda/reports/classandgernder.png](https://raw.githubusercontent.com/JMCoC/ml_engineer_roadmap/refs/heads/main/projects/6.%20TitanicEda/reports/classandgernder.png))
    As we see, being a woman in first class represents a survival probability of 97%, while being a man in third class only 14%.
 
 ## Technology used 🛠️
